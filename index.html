@@ -32,11 +32,14 @@
 	}
 	.Mボタン {
 		font-size: 30px;
-		background-color: blue;
+		background-color: #005500;
 	}
 	.数字ボタン {
 		font-size: 36px;
 		background-color: gray;
+	}
+	#開発者名 {
+		font-family: "Arial Black";
 	}
 
 </style>
@@ -129,7 +132,7 @@ function BSクリック(key) {
 function ボタン押下後色変更(key) {
 	let ボタン色 = document.getElementById(key).style.backgroundColor;
 	setTimeout(function() {document.getElementById(key).style.backgroundColor = 'red'}, 50);
-	setTimeout(function() {document.getElementById(key).style.backgroundColor = ボタン色}, 200);
+	setTimeout(function() {document.getElementById(key).style.backgroundColor = ボタン色}, 150);
 }
 
 </script>
@@ -171,6 +174,6 @@ function ボタン押下後色変更(key) {
 </table>
 </br>
 </br>
-<div>by NOBUSHIKOシステムズ</div>
+<div id="開発者名" >by NOBUSHIKO SYSTEMS</div>
 </body>
 </html>
