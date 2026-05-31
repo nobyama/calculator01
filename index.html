@@ -4,111 +4,132 @@
 <head>
 <title>電卓アプリ</title>
 <meta charset="utf-8">
-<meta name="viewport" content="user-scalable=yes, width=300px, maximum-scale=3.0" />
+<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 <style>
 	#表示画面 {
-		width: 285px;
+		width: 300px;
 		height: 70px;
 		border: 1px solid blue;
-		border-radius: 10px;
+		border-radius: 15px;
 		padding-right: 5px;
 		text-align: right;
 		font-size: 40px;
 		color: white;
 		background-color: black;
 	}
-	.数字ボタン {
+	.計算ボタン, .Mボタン, .数字ボタン {
 		width: 70px;
 		height: 70px;
 		border: 1px solid blue;
-		border-radius: 10px;
+		border-radius: 15px;
 		text-align: center;
-		font-size: 36px;
 		color: white;
-		background-color: gray;
 		box-shadow: rgb(128, 128, 128) 5px 5px;
 	}
 	.計算ボタン {
-		width: 70px;
-		height: 70px;
-		border: 1px solid blue;
-		border-radius: 10px;
-		text-align: center;
 		font-size: 36px;
-		color: white;
 		background-color: navy;
-		box-shadow: rgb(128, 128, 128) 5px 5px;
+	}
+	.Mボタン {
+		font-size: 30px;
+		background-color: blue;
+	}
+	.数字ボタン {
+		font-size: 36px;
+		background-color: gray;
 	}
 
 </style>
 <script>
 let 表示数値 = "";
-let 保存数値 = "";
+let 一時保存数値 = "";
+let M数値 = "";
 let 四則演算の種類 = "";
 
-function ACクリック(e) {
-	document.getElementById("表示画面").innerHTML = "0";
+function ACクリック(key) {
+	ボタン押下後色変更(key);
+	document.getElementById("表示画面").textContent = "0";
 	表示数値 = "";
-	保存数値 = ""; 
+	一時保存数値 = ""; 
+	M数値 = "";
 	四則演算の種類 = "";
 }
 
-function 平方根クリック(e) {
-	表示数値 = Math.sqrt(表示数値)							// 表示数値の平方根を計算
-	表示数値 = Math.round(表示数値 * 1000000000) / 1000000000		// 演算後、小数点8桁で数値を丸める
-	document.getElementById("表示画面").innerHTML = 表示数値;
-	四則演算の種類 = "=";									// 計算ボタンを押したことを記録（直後に数字ボタンを押した場合の対応用）
-	}
+function RCMクリック(key) {
+	ボタン押下後色変更(key);
+	document.getElementById("表示画面").textContent = M数値;
+	表示数値= M数値;
+}
 
-function 数字クリック(e) {
-	if (四則演算の種類 == "=") {				// 計算ボタン(=)を押した直後であれば、数値を初期化
-		ACクリック();
+function Mplusクリック(key) {
+	ボタン押下後色変更(key);
+	M数値 = M数値 * 1 + 表示数値 * 1;
+	M数値.toString();
+	一時保存数値 = ""; 
+	表示数値 = "0";
+}
+
+function 四則演算クリック(key) {
+	ボタン押下後色変更(key);
+	if (一時保存数値 != "") {						// 四則演算ボタンを押したときに、ひとまずここまでの計算結果を表示
+		計算クリック(key);
 	}
-	if (e.value == ".") {						// (1)小数ボタンを押した際の条件分岐
+	一時保存数値 = 表示数値; 
+	表示数値 = "0";
+	四則演算の種類 = key;
+}
+
+function 数字クリック(key) {
+	ボタン押下後色変更(key);
+	if (四則演算の種類 == "＝") {				// 計算ボタン(=)を押した直後であれば、数値を初期化
+		表示数値 = "";
+		一時保存数値 = ""; 
+		四則演算の種類 = "";
+	}
+	if (key == ".") {							// (1)小数ボタンを押した際の条件分岐
 		if (表示数値.indexOf( "." ) == -1) {		// 	表示数値の中に小数点が無い場合、小数点を追加
-			表示数値 = 表示数値 + e.value; 	
+			表示数値 = 表示数値 + key; 	
 		}								// 	表示数値の中に小数点がある場合、何もしない
 	} else {
 		if (表示数値 == "0") {				// (2)数字ボタンを押した際の条件分岐
 			表示数値 = "";					// 	表示数値が0の場合のみ、表示数値を一時的に空白とする
 		}
-		表示数値 = 表示数値 + e.value; 		// 	表示数値に、数字ボタンの値を追加
+		表示数値 = 表示数値 + key;	 		// 	表示数値に、数字ボタンの値を追加
 	 }
-	document.getElementById("表示画面").innerHTML = 表示数値;
+	document.getElementById("表示画面").textContent = 表示数値;
 }
 
-function 四則演算クリック(e) {
-	if (保存数値 != "") {						//
-		計算クリック();
-	}
-	保存数値 = 表示数値; 
-	表示数値 = "0";
-	四則演算の種類 = e.value;
-}
-
-function 計算クリック(e) {
-	Number(表示数値);						// 演算前に、表示数値と保存数値を文字列→数値とする
-	Number(保存数値);
-	if (四則演算の種類 == "+") {				// 足し算
-		表示数値 = 保存数値 * 1 + 表示数値 * 1;
-	} else if (四則演算の種類 == "-") {			// 引き算
-		表示数値 = 保存数値 - 表示数値;
+function 計算クリック(key) {
+	ボタン押下後色変更(key);
+	Number(表示数値);						// 演算前に、表示数値と一時保存数値を文字列→数値とする
+	Number(一時保存数値);
+	if (四則演算の種類 == "＋") {				// 足し算
+		表示数値 = 一時保存数値 * 1 + 表示数値 * 1;
+	} else if (四則演算の種類 == "－") {			// 引き算
+		表示数値 = 一時保存数値 - 表示数値;
 	} else if (四則演算の種類 == "×") {			// 掛け算
-		表示数値 = 保存数値 * 表示数値;
-	} else {								// 割り算
-		表示数値 = 保存数値 / 表示数値;
+		表示数値 = 一時保存数値 * 表示数値;
+	} else if (四則演算の種類 == "÷") {			// 割り算
+		表示数値 = 一時保存数値 / 表示数値;
 	}
 	表示数値 = Math.round(表示数値 * 1000000000) / 1000000000		// 演算後、小数点8桁で数値を丸める
-	保存数値 = 0;
-	四則演算の種類 = "=";					// 計算ボタンを押したことを記録（直後に数字ボタンを押した場合の対応用）
-	表示数値.toString();						// 演算後は、表示数値と保存数値を数値→文字列とする
-	保存数値.toString();
-	document.getElementById("表示画面").innerHTML = 表示数値;
+	一時保存数値 = 0;
+	四則演算の種類 = "＝";					// 計算ボタンを押したことを記録（直後に数字ボタンを押した場合の対応用）
+	表示数値.toString();						// 演算後は、表示数値と一時保存数値を数値→文字列とする
+	一時保存数値.toString();
+	document.getElementById("表示画面").textContent = 表示数値;
 }
 
-function BSクリック(e) {
+function BSクリック(key) {
+	ボタン押下後色変更(key);
 	表示数値 = 表示数値.slice(0, 表示数値.length - 1);
-	document.getElementById("表示画面").innerHTML = 表示数値;
+	document.getElementById("表示画面").textContent = 表示数値;
+}
+
+function ボタン押下後色変更(key) {
+	let ボタン色 = document.getElementById(key).style.backgroundColor;
+	setTimeout(function() {document.getElementById(key).style.backgroundColor = 'red'}, 50);
+	setTimeout(function() {document.getElementById(key).style.backgroundColor = ボタン色}, 200);
 }
 
 </script>
@@ -116,31 +137,38 @@ function BSクリック(e) {
 
 <body>
 	<div id="表示画面">0</div>
-</br>
-	<input type="button" class="計算ボタン" onclick="ACクリック(this)" value="AC">
-	<input type="button" class="計算ボタン" value="()">
-	<input type="button" class="計算ボタン" onclick="平方根クリック(this)" value="√">
-	<input type="button" class="計算ボタン" onclick="四則演算クリック(this)" value="÷">
-</br>
-	<input type="button" class="数字ボタン" onclick="数字クリック(this)" value="7">
-	<input type="button" class="数字ボタン" onclick="数字クリック(this)" value="8">
-	<input type="button" class="数字ボタン" onclick="数字クリック(this)" value="9">
-	<input type="button" class="計算ボタン" onclick="四則演算クリック(this)" value="×">
-</br>
-	<input type="button" class="数字ボタン" onclick="数字クリック(this)" value="4">
-	<input type="button" class="数字ボタン" onclick="数字クリック(this)" value="5">
-	<input type="button" class="数字ボタン" onclick="数字クリック(this)" value="6">
-	<input type="button" class="計算ボタン" onclick="四則演算クリック(this)" value="-">
-</br>
-	<input type="button" class="数字ボタン" onclick="数字クリック(this)" value="1">
-	<input type="button" class="数字ボタン" onclick="数字クリック(this)" value="2">
-	<input type="button" class="数字ボタン" onclick="数字クリック(this)" value="3">
-	<input type="button" class="計算ボタン" onclick="四則演算クリック(this)" value="+">
-</br>
-	<input type="button" class="数字ボタン" onclick="数字クリック(this)" value="0">
-	<input type="button" class="数字ボタン" onclick="数字クリック(this)" value=".">
-	<input type="button" class="数字ボタン" onclick="BSクリック(this)" value="BS">
-	<input type="button" class="計算ボタン" onclick="計算クリック(this)" value="=">
+<table>
+<tr>
+	<td class="計算ボタン" id="AC" onclick="ACクリック('AC')">AC</td>
+	<td class="Mボタン" id="RCM" onclick="RCMクリック('RCM')">RCM</td>
+	<td class="Mボタン" id="Mplus" onclick="Mplusクリック('Mplus')">M＋</td>
+	<td class="計算ボタン" id="÷" onclick="四則演算クリック('÷')">÷</td>
+</tr>
+<tr>
+	<td class="数字ボタン" id="7" onclick="数字クリック(7)">7</td>
+	<td class="数字ボタン" id="8" onclick="数字クリック(8)">8</td>
+	<td class="数字ボタン" id="9" onclick="数字クリック(9)">9</td>
+	<td class="計算ボタン" id="×" onclick="四則演算クリック('×')">×</td>
+</tr>
+<tr>
+	<td class="数字ボタン" id="4" onclick="数字クリック(4)">4</td>
+	<td class="数字ボタン" id="5" onclick="数字クリック(5)">5</td>
+	<td class="数字ボタン" id="6" onclick="数字クリック(6)">6</td>
+	<td class="計算ボタン" id="－" onclick="四則演算クリック('－')">－</td>
+</tr>
+<tr>
+	<td class="数字ボタン" id="1" onclick="数字クリック(1)">1</td>
+	<td class="数字ボタン" id="2" onclick="数字クリック(2)">2</td>
+	<td class="数字ボタン" id="3" onclick="数字クリック(3)">3</td>
+	<td class="計算ボタン" id="＋" onclick="四則演算クリック('＋')">＋</td>
+</tr>
+<tr>
+	<td class="数字ボタン" id="0" onclick="数字クリック(0)">0</td>
+	<td class="数字ボタン" id="." onclick="数字クリック('.')">.</td>
+	<td class="数字ボタン" id="BS" onclick="BSクリック(BS')">BS</td>
+	<td class="計算ボタン" id="＝" onclick="計算クリック('＝')">＝</td>
+</tr>
+</table>
 </br>
 </br>
 <div>by NOBUSHIKOシステムズ</div>
