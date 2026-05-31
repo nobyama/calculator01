@@ -39,7 +39,7 @@
 		background-color: gray;
 	}
 	#開発者名 {
-		font-family: "Arial Black", Fantasy;
+		font-family: "Impact", Fantasy;
 	}
 
 </style>
@@ -58,7 +58,7 @@ function ACクリック(key) {
 	四則演算の種類 = "";
 }
 
-function RCMクリック(key) {
+function RMクリック(key) {
 	ボタン押下後色変更(key);
 	document.getElementById("表示画面").textContent = M数値;
 	表示数値= M数値;
@@ -143,7 +143,7 @@ function ボタン押下後色変更(key) {
 <table>
 <tr>
 	<td class="計算ボタン" id="AC" onclick="ACクリック('AC')">AC</td>
-	<td class="Mボタン" id="RCM" onclick="RCMクリック('RCM')">RCM</td>
+	<td class="Mボタン" id="RM" onclick="RMクリック('RM')">RM</td>
 	<td class="Mボタン" id="Mplus" onclick="Mplusクリック('Mplus')">M＋</td>
 	<td class="計算ボタン" id="÷" onclick="四則演算クリック('÷')">÷</td>
 </tr>
