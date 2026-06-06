@@ -6,16 +6,43 @@
 <meta charset="utf-8">
 <meta name="viewport" content="user-scalable=yes, width=300px, maximum-scale=3.0" />
 <style>
-	#表示画面 {
-		width: 300px;
-		height: 70px;
-		border: 1px solid blue;
-		border-radius: 15px;
+	#画面 {
+		border-collapse: collapse;
+		margin-bottom: 8px; 
+		height: 30px;
+		border-radius: 10px;
+		background-color: black;
+		box-shadow: rgb(128, 128, 128) 4px 4px;
+	}
+	#Mマーク表示画面 {
+		width: 15px;
+		vertical-align: bottom;
+		padding-left: 5px;
+		font-size: 15px;
+		color: lime;
+	}
+	#M数値表示画面 {
+		width: 15px;
+		text-align: left;
+		vertical-align: top;
+		padding-left: 5px;
+		font-size: 15px;
+		color: lime;
+	}
+	#メイン画面 {
+		width: 260px;
 		padding-right: 5px;
 		text-align: right;
 		font-size: 40px;
 		color: white;
-		background-color: black;
+		table-layout: fixed;
+	}
+	#四則演算マーク表示画面 {
+		width: 15px;
+		padding-top: 10px;
+		vertical-align: top;
+		font-size: 15px;
+		color: white;
 	}
 	.計算ボタン, .Mボタン, .数字ボタン {
 		width: 70px;
@@ -51,7 +78,10 @@ let 四則演算の種類 = "";
 
 function ACクリック(key) {
 	ボタン押下後色変更(key);
-	document.getElementById("表示画面").textContent = "0";
+	document.getElementById("メイン画面").textContent = "0";
+	document.getElementById("Mマーク表示画面").textContent = " ";
+	document.getElementById("四則演算マーク表示画面").textContent = " ";
+	document.getElementById("M数値表示画面").textContent = "";
 	表示数値 = "";
 	一時保存数値 = ""; 
 	M数値 = "";
@@ -60,7 +90,7 @@ function ACクリック(key) {
 
 function RMクリック(key) {
 	ボタン押下後色変更(key);
-	document.getElementById("表示画面").textContent = M数値;
+	document.getElementById("メイン画面").textContent = M数値;
 	表示数値= M数値;
 }
 
@@ -70,6 +100,8 @@ function Mplusクリック(key) {
 	M数値.toString();
 	一時保存数値 = ""; 
 	表示数値 = "0";
+	document.getElementById("Mマーク表示画面").textContent = "M";
+	document.getElementById("M数値表示画面").textContent = M数値;
 }
 
 function 四則演算クリック(key) {
@@ -80,6 +112,7 @@ function 四則演算クリック(key) {
 	一時保存数値 = 表示数値; 
 	表示数値 = "0";
 	四則演算の種類 = key;
+	document.getElementById("四則演算マーク表示画面").textContent = 四則演算の種類;
 }
 
 function 数字クリック(key) {
@@ -99,7 +132,7 @@ function 数字クリック(key) {
 		}
 		表示数値 = 表示数値 + key;	 		// 	表示数値に、数字ボタンの値を追加
 	 }
-	document.getElementById("表示画面").textContent = 表示数値;
+	document.getElementById("メイン画面").textContent = 表示数値;
 }
 
 function 計算クリック(key) {
@@ -115,18 +148,19 @@ function 計算クリック(key) {
 	} else if (四則演算の種類 == "÷") {			// 割り算
 		表示数値 = 一時保存数値 / 表示数値;
 	}
-	表示数値 = Math.round(表示数値 * 1000000000) / 1000000000		// 演算後、小数点8桁で数値を丸める
+	表示数値 = Math.round(表示数値 * 10000000) / 10000000		// 演算後、小数点8桁で数値を丸める
 	一時保存数値 = 0;
 	四則演算の種類 = "＝";					// 計算ボタンを押したことを記録（直後に数字ボタンを押した場合の対応用）
 	表示数値.toString();						// 演算後は、表示数値と一時保存数値を数値→文字列とする
 	一時保存数値.toString();
-	document.getElementById("表示画面").textContent = 表示数値;
+	document.getElementById("メイン画面").textContent = 表示数値;
+	document.getElementById("四則演算マーク表示画面").textContent = " ";
 }
 
 function BSクリック(key) {
 	ボタン押下後色変更(key);
 	表示数値 = 表示数値.slice(0, 表示数値.length - 1);
-	document.getElementById("表示画面").textContent = 表示数値;
+	document.getElementById("メイン画面").textContent = 表示数値;
 }
 
 function ボタン押下後色変更(key) {
@@ -139,8 +173,19 @@ function ボタン押下後色変更(key) {
 </head>
 
 <body>
-	<div id="表示画面">0</div>
-<table>
+
+<table id="画面">
+<tr>
+	<td id="Mマーク表示画面"></td>
+	<td id="メイン画面" rowspan="2">0</td>
+	<td id="四則演算マーク表示画面" rowspan="2"></td>
+</tr>
+<tr>
+	<td id="M数値表示画面" colspan="2"></td>
+</tr>
+</table>
+
+<table id="ボタン">
 <tr>
 	<td class="計算ボタン" id="AC" onclick="ACクリック('AC')">AC</td>
 	<td class="Mボタン" id="RM" onclick="RMクリック('RM')">RM</td>
@@ -168,7 +213,7 @@ function ボタン押下後色変更(key) {
 <tr>
 	<td class="数字ボタン" id="0" onclick="数字クリック(0)">0</td>
 	<td class="数字ボタン" id="." onclick="数字クリック('.')">.</td>
-	<td class="数字ボタン" id="BS" onclick="BSクリック('BS')">BS</td>
+	<td class="数字ボタン" id="BS" onclick="BSクリック(BS')">BS</td>
 	<td class="計算ボタン" id="＝" onclick="計算クリック('＝')">＝</td>
 </tr>
 </table>
